@@ -1,4 +1,4 @@
-from app.tools import ToolRegistry, ToolError
+from app.tools import ToolError, ToolRegistry
 
 
 class S:
