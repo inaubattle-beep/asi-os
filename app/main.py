@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from .config import settings
 from .db import Database
@@ -23,6 +23,7 @@ async def create_task(req: TaskRequest) -> Optional[Dict[str, Any]]:
     if not req.goal.strip():
         raise HTTPException(400, "goal is required")
     task = db.create_task(req.goal)
+    assert task is not None
     return await orchestrator.run(task["id"], req.goal, req.max_steps or settings.max_steps)
 
 @app.get("/tasks/{task_id}")
