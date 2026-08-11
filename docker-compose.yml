@@ -1,0 +1,12 @@
+services:
+  asi-os:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./workspace:/workspace
+      - ./data:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

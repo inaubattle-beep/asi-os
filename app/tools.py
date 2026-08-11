@@ -1,24 +1,25 @@
 import subprocess
 from pathlib import Path
+from typing import Any, Dict
 
 
 class ToolError(Exception):
     pass
 
 class ToolRegistry:
-    def __init__(self, settings):
+    def __init__(self, settings: Any) -> None:
         self.root = Path(settings.workspace).resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self.timeout = settings.shell_timeout
         self.allowed_commands = {"python", "python3", "echo", "pwd", "ls", "cat"}
 
-    def _safe_path(self, path):
+    def _safe_path(self, path: str) -> Path:
         p = (self.root / path).resolve()
         if p != self.root and self.root not in p.parents:
             raise ToolError("path escapes workspace")
         return p
 
-    def execute(self, name, args):
+    def execute(self, name: str, args: Dict[str, Any]) -> Dict[str, Any]:
         if name == "write_file":
             p = self._safe_path(args["path"])
             p.parent.mkdir(parents=True, exist_ok=True)
