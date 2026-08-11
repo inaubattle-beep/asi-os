@@ -2,7 +2,7 @@ import json
 import sqlite3
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class Database:
@@ -24,14 +24,14 @@ class Database:
                 content TEXT NOT NULL
             )""")
 
-    def create_task(self, goal: str) -> Optional[Dict[str, Any]]:
+    def create_task(self, goal: str) -> dict[str, Any] | None:
         tid = str(uuid.uuid4())
         with sqlite3.connect(self.path) as c:
             c.execute("INSERT INTO tasks(id,goal,status) VALUES(?,?,?)",
                       (tid, goal, "running"))
         return self.get_task(tid)
 
-    def get_task(self, tid: str) -> Optional[Dict[str, Any]]:
+    def get_task(self, tid: str) -> dict[str, Any] | None:
         with sqlite3.connect(self.path) as c:
             c.row_factory = sqlite3.Row
             row = c.execute("SELECT * FROM tasks WHERE id=?", (tid,)).fetchone()
@@ -40,7 +40,7 @@ class Database:
             d["history"] = json.loads(d["history"])
             return d
 
-    def update_task(self, tid: str, status: Optional[str] = None, step: Optional[int] = None, history: Optional[list[Any]] = None) -> None:
+    def update_task(self, tid: str, status: str | None = None, step: int | None = None, history: list[Any] | None = None) -> None:
         task = self.get_task(tid)
         assert task is not None
         status = task["status"] if status is None else status
@@ -50,7 +50,7 @@ class Database:
             c.execute("UPDATE tasks SET status=?,step=?,history=? WHERE id=?",
                       (status, step, json.dumps(history), tid))
 
-    def add_memory(self, task_id: Optional[str], kind: str, content: str) -> None:
+    def add_memory(self, task_id: str | None, kind: str, content: str) -> None:
         with sqlite3.connect(self.path) as c:
             c.execute("INSERT INTO memories VALUES(?,?,?,?)",
                       (str(uuid.uuid4()), task_id, kind, content))

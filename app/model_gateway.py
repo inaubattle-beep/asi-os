@@ -1,7 +1,7 @@
 import json
+from typing import Any
 
 import httpx
-from typing import Any, Dict, List
 
 SYSTEM = """You are the reasoning model inside ASI-OS.
 Return JSON only. Never claim a tool was executed unless its result is supplied.
@@ -11,7 +11,7 @@ class ModelGateway:
     def __init__(self, settings: Any) -> None:
         self.settings = settings
 
-    async def decide(self, goal: str, history: List[Dict[str, Any]]) -> Any:
+    async def decide(self, goal: str, history: list[dict[str, Any]]) -> Any:
         if self.settings.model_mode == "mock":
             return self._mock(goal, history)
 
@@ -43,7 +43,7 @@ class ModelGateway:
             r.raise_for_status()
             return json.loads(r.json()["choices"][0]["message"]["content"])
 
-    def _mock(self, goal: str, history: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _mock(self, goal: str, history: list[dict[str, Any]]) -> dict[str, Any]:
         if not history and "hello.txt" in goal.lower():
             return {"type":"tool","tool":"write_file",
                     "args":{"path":"hello.txt","content":"Hello from ASI-OS\n"},

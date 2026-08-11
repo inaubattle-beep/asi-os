@@ -1,6 +1,7 @@
+from typing import Any
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Any, Dict, Optional
 
 from .config import settings
 from .db import Database
@@ -15,11 +16,11 @@ class TaskRequest(BaseModel):
     max_steps: int | None = None
 
 @app.get("/health")
-def health() -> Dict[str, str]:
+def health() -> dict[str, str]:
     return {"status": "ok", "service": "asi-os"}
 
 @app.post("/tasks")
-async def create_task(req: TaskRequest) -> Optional[Dict[str, Any]]:
+async def create_task(req: TaskRequest) -> dict[str, Any] | None:
     if not req.goal.strip():
         raise HTTPException(400, "goal is required")
     task = db.create_task(req.goal)
@@ -27,7 +28,7 @@ async def create_task(req: TaskRequest) -> Optional[Dict[str, Any]]:
     return await orchestrator.run(task["id"], req.goal, req.max_steps or settings.max_steps)
 
 @app.get("/tasks/{task_id}")
-def get_task(task_id: str) -> Optional[Dict[str, Any]]:
+def get_task(task_id: str) -> dict[str, Any] | None:
     task = db.get_task(task_id)
     if not task:
         raise HTTPException(404, "task not found")

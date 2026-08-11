@@ -1,7 +1,8 @@
+from typing import Any
+
+from .db import Database
 from .model_gateway import ModelGateway
 from .tools import ToolError, ToolRegistry
-from typing import Any, Dict, Optional, List
-from .db import Database
 
 
 class Orchestrator:
@@ -10,8 +11,8 @@ class Orchestrator:
         self.model = ModelGateway(settings)
         self.tools = ToolRegistry(settings)
 
-    async def run(self, task_id: str, goal: str, max_steps: int) -> Optional[Dict[str, Any]]:
-        history: List[Dict[str, Any]] = []
+    async def run(self, task_id: str, goal: str, max_steps: int) -> dict[str, Any] | None:
+        history: list[dict[str, Any]] = []
         for step in range(1, max_steps + 1):
             decision = await self.model.decide(goal, history)
             event = {"step": step, "decision": decision}
