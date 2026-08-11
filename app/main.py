@@ -19,14 +19,14 @@ def health() -> Dict[str, str]:
     return {"status": "ok", "service": "asi-os"}
 
 @app.post("/tasks")
-async def create_task(req: TaskRequest) -> Dict[str, Any]:
+async def create_task(req: TaskRequest) -> Optional[Dict[str, Any]]:
     if not req.goal.strip():
         raise HTTPException(400, "goal is required")
     task = db.create_task(req.goal)
     return await orchestrator.run(task["id"], req.goal, req.max_steps or settings.max_steps)
 
 @app.get("/tasks/{task_id}")
-def get_task(task_id: str) -> Dict[str, Any]:
+def get_task(task_id: str) -> Optional[Dict[str, Any]]:
     task = db.get_task(task_id)
     if not task:
         raise HTTPException(404, "task not found")
