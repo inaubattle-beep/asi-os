@@ -1,10 +1,11 @@
 from .model_gateway import ModelGateway
 from .tools import ToolError, ToolRegistry
 from typing import Any, Dict, Optional, List
+from .db import Database
 
 
 class Orchestrator:
-    def __init__(self, settings: Any, db: Any) -> None:
+    def __init__(self, settings: Any, db: Database) -> None:
         self.db = db
         self.model = ModelGateway(settings)
         self.tools = ToolRegistry(settings)

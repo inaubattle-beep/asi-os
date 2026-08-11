@@ -24,7 +24,7 @@ class Database:
                 content TEXT NOT NULL
             )""")
 
-    def create_task(self, goal: str) -> Dict[str, Any]:
+    def create_task(self, goal: str) -> Optional[Dict[str, Any]]:
         tid = str(uuid.uuid4())
         with sqlite3.connect(self.path) as c:
             c.execute("INSERT INTO tasks(id,goal,status) VALUES(?,?,?)",
@@ -40,8 +40,9 @@ class Database:
             d["history"] = json.loads(d["history"])
             return d
 
-    def update_task(self, tid: str, status: Optional[str] = None, step: Optional[int] = None, history: Optional[list] = None) -> None:
+    def update_task(self, tid: str, status: Optional[str] = None, step: Optional[int] = None, history: Optional[list[Any]] = None) -> None:
         task = self.get_task(tid)
+        assert task is not None
         status = task["status"] if status is None else status
         step = task["step"] if step is None else step
         history = task["history"] if history is None else history
