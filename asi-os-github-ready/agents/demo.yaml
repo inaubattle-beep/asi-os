@@ -1,0 +1,8 @@
+name: demo-agent
+version: 0.1.0
+model_role: general
+capabilities: []
+risk_profile: low
+limits:
+  max_steps: 10
+  max_wall_time_seconds: 60
