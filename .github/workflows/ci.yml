@@ -41,7 +41,7 @@ jobs:
 
       - name: Type check (mypy)
         run: |
-          python -m mypy src/asi_os || true
+          python -m mypy app
 
       - name: Test (pytest)
         run: |
